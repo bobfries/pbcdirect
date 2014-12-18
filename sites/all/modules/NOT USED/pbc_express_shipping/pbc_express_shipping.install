@@ -1,0 +1,10 @@
+<?php
+
+function pbc_express_shipping_install(){
+  $product_types = entity_get_info('commerce_product');
+  foreach ($product_types['bundles'] as $bundle => $details) {
+	  if (!field_info_instance('commerce_product', 'express_shipping_price', $bundle)) {
+		commerce_price_create_instance('express_shipping_price', 'commerce_product', $bundle, t('Express Shipping Price'));
+	}
+  }
+}

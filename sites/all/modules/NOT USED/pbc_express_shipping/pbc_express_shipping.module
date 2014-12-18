@@ -1,0 +1,76 @@
+<?php
+
+/**
+ * @file
+ * Defines an 'flat rate shipping field method' to allow a simple, flat rate price field 
+ * to be used to calculate a product's shipping price.
+ */
+
+
+
+function pbc_express_shipping_field_attach_create_bundle($entity_type, $bundle){
+  if ($entity_type != 'commerce_product') {
+    return;
+  }
+  // Check the field exists.
+  if (!field_info_instance('commerce_product', 'express_shipping_field', $bundle)) {
+   commerce_price_create_instance('express_shipping_field', 'commerce_product', $bundle, t('Express Shipping Price'));
+  }
+}
+
+/**
+ * Implements hook_commerce_shipping_method_info().
+ */
+function pbc_express_shipping_commerce_shipping_method_info() {
+  $shipping_methods = array();
+
+  $shipping_methods['express_shipping_field_method'] = array(
+    'title' => t('Express shipping rate'),
+    'description' => t('Shipping rate, based on express shipping field per product.'),
+  );
+
+  return $shipping_methods;
+}
+
+/**
+ * Implements hook_commerce_shipping_service_info().
+ */
+function pbc_express_shipping_commerce_shipping_service_info() {
+  $shipping_services = array();
+
+  $shipping_services['express_shipping_field_service'] = array(
+    'title' => t('Express Delivery'),
+    'description' => t('Orders received before 1pm will be dispatched same day.'),
+    'display_title' => t('Express Delivery - Next Working Day'),
+    'shipping_method' => 'express_shipping_field_method',
+    'price_component' => 'express_shipping',
+    'callbacks' => array(
+      'rate' => 'express_shipping_field_service_rate',
+    ),
+  );
+
+  return $shipping_services;
+}
+
+/**
+ * Shipping service callback: returns a base price array for a shipping service
+ * calculated for the given order.
+ */
+function express_shipping_field_service_rate($shipping_service, $order) {  
+  $order_wrapper = entity_metadata_wrapper('commerce_order', $order);
+  $line_items = $order_wrapper->commerce_line_items;
+  $amount = 0;
+  foreach ($line_items as $item) {
+    $isfield = field_info_instance('commerce_product', 'express_shipping_price', $item->commerce_product->type->raw());
+    // Ensure the field exists on this product type, and that it is not empty
+    if ($isfield && isset($item->commerce_product->express_shipping_price)){
+      $item_amount = $item->commerce_product->express_shipping_price->amount->raw() * $item->quantity->raw();
+      $amount = $amount + $item_amount;
+    }
+  }
+  return array(
+    'amount' => $amount,
+    'currency_code' => $order_wrapper->commerce_order_total->currency_code->value(),
+    'data' => array(),
+  );
+}

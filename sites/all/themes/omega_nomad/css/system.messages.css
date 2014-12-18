@@ -1,0 +1,66 @@
+
+/**
+ * @file
+ * Styles for system messages.
+ */
+
+div.messages {
+  background-position: 8px 8px; /* LTR */
+  background-repeat: no-repeat;
+  border: 1px solid;
+  margin: 6px 0;
+  padding: 10px 10px 10px 50px;
+              font-family: 'AniversRegular', Tahoma, Geneva, sans-serif !important;
+ 			text-transform: uppercase;
+			font-weight:400 !important; /* LTR */
+}
+
+div.status {
+  background-image: url(../images/message-24-ok.png) !important;
+  border-color: #be7 ;
+}
+div.status,
+.ok {
+  color: #fff !important;
+}
+div.status,
+table tr.ok {
+  background-color: #be7 !important;
+}
+
+div.warning {
+  background-image: url(../images/message-24-warning.png) !important;
+  border-color: #ed5 !important;
+}
+div.warning,
+.warning {
+  color: #fff !important;
+}
+div.warning,
+table tr.warning {
+  background-color: #ed5 !important;
+}
+
+div.error {
+  background-image: url(../images/message-24-error.png) !important;
+  border-color: #ed541d;
+}
+div.error,
+.error {
+  color: #fff;
+}
+div.error,
+table tr.error {
+  background-color: #ed541d !important;
+}
+div.error p.error {
+  color: #fff !important;
+}
+
+div.messages ul {
+  margin: 0 0 0 1em; /* LTR */
+  padding: 0;
+}
+div.messages ul li {
+  list-style-image: none;
+}
